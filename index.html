@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="웹 보안의 Semantic Gap을 구문, 데이터 표현, 메타데이터, 정책, 인지 맥락 관점에서 재구성한 연구형 홈페이지"
+      content="Semantic Gap 연구 노트를 전체 문서로 탐색할 수 있는 웹 보안 위키"
     />
     <meta property="og:title" content="Semantic Gap Atlas" />
     <meta
       property="og:description"
-      content="서로 다른 파서, 정책, 표현 모델이 만들어내는 웹 보안 불일치 지도"
+      content="구문, 표현, 메타데이터, 정책, 인지 맥락 불일치를 전체 위키 문서로 탐색"
     />
     <meta property="og:image" content="/image.png" />
     <title>Semantic Gap Atlas</title>
@@ -18,122 +18,81 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="Semantic Gap Atlas home">
+    <div class="topbar">
+      <a class="brand" href="#/" aria-label="Semantic Gap Atlas">
         <img src="/logo2.png" alt="" />
         <span>Semantic Gap Atlas</span>
       </a>
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#map">Map</a>
-        <a href="#cases">Cases</a>
-        <a href="#method">Method</a>
+      <nav class="topnav" aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
+        <a href="#wiki">Wiki</a>
+        <a href="#taxonomy">Taxonomy</a>
       </nav>
+    </div>
+
+    <header id="overview" class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="/image.png" alt="" />
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">Web Security Knowledge Base</p>
+        <h1>Semantic Gap Atlas</h1>
+        <p>
+          같은 입력이 서로 다른 파서, 정책 엔진, 브라우저, 프록시, 런타임에서
+          다른 의미로 해석되는 순간을 추적한다. 요약 카드가 아니라 원본 위키
+          문서 전체를 탐색할 수 있는 공개용 아카이브로 재구성했다.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#wiki">문서 전체 보기</a>
+          <a class="button ghost" href="#taxonomy">분류 체계</a>
+        </div>
+      </div>
+      <div class="hero-stats" aria-label="Repository stats">
+        <div><strong id="stat-docs">64</strong><span>Documents</span></div>
+        <div><strong>5</strong><span>Families</span></div>
+        <div><strong>15</strong><span>Subcategories</span></div>
+      </div>
     </header>
 
-    <main id="top">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-visual" aria-hidden="true">
-          <img src="/image.png" alt="" />
-        </div>
-        <div class="hero-content">
-          <p class="eyebrow">Web Security Research</p>
-          <h1 id="hero-title">Semantic Gap Atlas</h1>
-          <p class="hero-copy">
-            같은 입력이 서로 다른 계층에서 다르게 해석될 때 보안 경계는 흔들립니다.
-            이 페이지는 레포에 정리된 Semantic Gap 사례를 분류 체계, 공격 흐름,
-            대표 취약점 중심으로 다시 엮은 공개용 홈페이지입니다.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#cases">사례 탐색</a>
-            <a class="button secondary" href="#map">분류 지도 보기</a>
+    <main>
+      <section id="wiki" class="wiki-shell">
+        <aside class="sidebar" aria-label="Document navigation">
+          <div class="sidebar-head">
+            <p class="eyebrow">Wiki</p>
+            <h2>문서 탐색</h2>
           </div>
-        </div>
-        <div class="hero-metrics" aria-label="Repository summary">
-          <div>
-            <strong id="case-count">46</strong>
-            <span>Cases</span>
+          <label class="search">
+            <span>Search</span>
+            <input id="doc-search" type="search" placeholder="JWT, cache, parsing..." />
+          </label>
+          <div id="doc-tree" class="doc-tree"></div>
+        </aside>
+
+        <article class="reader">
+          <div class="reader-toolbar">
+            <div>
+              <p id="doc-breadcrumb" class="breadcrumb">Semantic Gap</p>
+              <h2 id="doc-title">문서를 불러오는 중</h2>
+            </div>
+            <a id="raw-link" class="raw-link" href="#" target="_blank" rel="noreferrer">Raw</a>
           </div>
-          <div>
-            <strong>5</strong>
-            <span>Gap Families</span>
-          </div>
-          <div>
-            <strong>15</strong>
-            <span>Subcategories</span>
-          </div>
-        </div>
+          <div id="doc-meta" class="doc-meta"></div>
+          <div id="doc-content" class="markdown-body"></div>
+        </article>
       </section>
 
-      <section class="intro-band">
-        <div>
-          <span class="section-kicker">Core Idea</span>
-          <h2>Semantic Gap은 “검증한 의미”와 “실행된 의미”의 차이다.</h2>
-        </div>
-        <p>
-          프록시, 브라우저, CDN, 프레임워크, 보안 장비는 모두 입력을 해석한다.
-          문제는 각 계층의 규칙이 완전히 같지 않다는 점이다. 공격자는 이 틈을 이용해
-          앞단에서는 무해한 요청처럼 보이게 만들고, 뒤단에서는 다른 구조나 권한으로
-          실행되게 만든다.
-        </p>
-      </section>
-
-      <section id="map" class="section">
-        <div class="section-heading">
-          <span class="section-kicker">Taxonomy</span>
-          <h2>다섯 가지 Gap Family</h2>
+      <section id="taxonomy" class="taxonomy">
+        <div class="section-title">
+          <p class="eyebrow">Taxonomy</p>
+          <h2>불일치가 발생하는 다섯 개의 층</h2>
         </div>
         <div id="family-grid" class="family-grid"></div>
       </section>
-
-      <section id="cases" class="section cases-section">
-        <div class="section-heading">
-          <span class="section-kicker">Case Library</span>
-          <h2>사례를 빠르게 훑고 비교하기</h2>
-        </div>
-        <div class="case-toolbar" role="search">
-          <label class="search-box">
-            <span>Search</span>
-            <input id="search-input" type="search" placeholder="request smuggling, cache, JWT..." />
-          </label>
-          <div id="filter-bar" class="filter-bar" aria-label="Category filters"></div>
-        </div>
-        <div id="case-grid" class="case-grid"></div>
-      </section>
-
-      <section id="method" class="method-section">
-        <div class="section-heading">
-          <span class="section-kicker">Analysis Flow</span>
-          <h2>불일치를 찾는 관찰 순서</h2>
-        </div>
-        <ol class="flow-list">
-          <li>
-            <strong>Boundary</strong>
-            입력이 어디서 끊기고 이어지는지 확인한다.
-          </li>
-          <li>
-            <strong>Normalization</strong>
-            인코딩, 대소문자, 경로, 유니코드 정규화 순서를 비교한다.
-          </li>
-          <li>
-            <strong>Authority</strong>
-            헤더, 쿠키, 토큰, 캐시 키가 어느 계층에서 신뢰되는지 추적한다.
-          </li>
-          <li>
-            <strong>Policy</strong>
-            WAF, 브라우저 정책, 백엔드 권한 검사가 같은 결론을 내는지 본다.
-          </li>
-        </ol>
-      </section>
     </main>
 
-    <dialog id="case-dialog" class="case-dialog">
-      <button class="dialog-close" type="button" aria-label="Close dialog">×</button>
-      <div id="dialog-body"></div>
-    </dialog>
-
-    <footer class="site-footer">
-      <span>Semantic Gap Atlas</span>
-      <span>Built from the repository notes for Vercel static hosting.</span>
+    <footer class="footer">
+      <strong>Semantic Gap Atlas</strong>
+      <span>Original repository notes rendered as a Vercel-hosted security wiki.</span>
     </footer>
 
     <script src="/script.js"></script>
