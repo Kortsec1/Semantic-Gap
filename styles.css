@@ -270,6 +270,8 @@ h1 {
   font-size: clamp(56px, 10vw, 128px);
   line-height: 0.9;
   letter-spacing: 0;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 h2 {
@@ -278,12 +280,15 @@ h2 {
   line-height: 1.05;
   letter-spacing: 0;
   text-wrap: balance;
+  word-break: keep-all;
 }
 
 h3 {
   margin-bottom: 8px;
   font-size: 18px;
   line-height: 1.25;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .hero-copy p:not(.eyebrow) {
@@ -427,6 +432,7 @@ h3 {
 
 .sidebar h2 {
   font-size: 27px;
+  max-width: 100%;
 }
 
 .search {
@@ -584,6 +590,8 @@ h3 {
 .reader-toolbar h2 {
   max-width: 920px;
   font-size: clamp(32px, 5vw, 60px);
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .raw-link {
@@ -675,6 +683,8 @@ h3 {
   color: var(--ink);
   letter-spacing: 0;
   scroll-margin-top: 92px;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .markdown-body h1 {
@@ -838,6 +848,8 @@ h3 {
   display: block;
   font-size: 18px;
   line-height: 1.25;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .featured-card span,
