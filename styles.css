@@ -21,6 +21,10 @@
   --input-bg: #f8f8f3;
   --hover-bg: #f9faf5;
   --chip-bg: #dde6df;
+  --table-line: #cdd7d2;
+  --code-panel: #eef2ed;
+  --code-panel-line: rgba(23, 33, 37, 0.12);
+  --code-panel-ink: #243036;
   --hero-overlay-a: rgba(9, 20, 29, 0.84);
   --hero-overlay-b: rgba(13, 35, 45, 0.6);
   --hero-overlay-c: rgba(13, 35, 45, 0.16);
@@ -52,6 +56,10 @@
   --input-bg: #0d131a;
   --hover-bg: #18222c;
   --chip-bg: #172129;
+  --table-line: rgba(232, 241, 238, 0.14);
+  --code-panel: #0d141b;
+  --code-panel-line: rgba(232, 241, 238, 0.13);
+  --code-panel-ink: #dce8e5;
   --hero-overlay-a: rgba(4, 7, 11, 0.9);
   --hero-overlay-b: rgba(8, 14, 21, 0.7);
   --hero-overlay-c: rgba(8, 14, 21, 0.12);
@@ -744,7 +752,7 @@ h3 {
 
 .markdown-body pre {
   overflow: auto;
-  border: 1px solid #d7dfdd;
+  border: 1px solid var(--code-panel-line);
   border-radius: 8px;
   padding: 14px;
   background: #101820;
@@ -763,13 +771,15 @@ h3 {
   overflow: auto;
   border-collapse: collapse;
   margin: 18px 0;
+  border: 1px solid var(--table-line);
+  border-radius: 8px;
   font-size: 14px;
 }
 
 .markdown-body th,
 .markdown-body td {
   min-width: 160px;
-  border: 1px solid #d9dfdc;
+  border: 1px solid var(--table-line);
   padding: 10px;
   vertical-align: top;
 }
@@ -778,6 +788,33 @@ h3 {
   background: var(--chip-bg);
   color: var(--ink);
   text-align: left;
+}
+
+.markdown-body td code {
+  border: 1px solid var(--code-panel-line);
+  background: var(--code-panel);
+  color: var(--code-panel-ink);
+}
+
+.markdown-body td pre {
+  margin: 4px 0;
+  border-color: var(--code-panel-line);
+  border-radius: 7px;
+  padding: 10px 11px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%),
+    var(--code-panel);
+  color: var(--code-panel-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.markdown-body td pre code {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .markdown-body img {
