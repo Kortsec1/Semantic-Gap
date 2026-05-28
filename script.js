@@ -278,7 +278,7 @@ function renderDocTree() {
     .join("");
 }
 
-async function loadDoc(path, updateHash = true) {
+async function loadDoc(path, updateHash = true, scrollToOverview = false) {
   activePath = path;
   const doc = DOCS.find((item) => item.path === path) || DOCS[1];
   activePath = doc.path;
@@ -305,6 +305,9 @@ async function loadDoc(path, updateHash = true) {
   } catch (error) {
     els.content.innerHTML = `<div class="empty-state">문서를 불러오지 못했습니다. ${escapeHtml(error.message)}</div>`;
     els.toc.innerHTML = "";
+  }
+  if (scrollToOverview) {
+    scrollToDocumentOverview();
   }
   if (location.hash === "#wiki") {
     const target = document.querySelector("#wiki");
@@ -603,6 +606,19 @@ function slugify(value) {
   return slug || "section";
 }
 
+function scrollToDocumentOverview() {
+  const overview = Array.from(els.content.querySelectorAll("h2")).find((heading) => {
+    const text = heading.textContent.trim().toLowerCase();
+    return text === "개요" || text === "overview";
+  });
+  const target = overview || document.querySelector(".reader");
+  if (!target) return;
+  window.scrollTo({
+    top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - 92),
+    behavior: "smooth",
+  });
+}
+
 function applyTheme(theme) {
   activeTheme = theme;
   document.documentElement.dataset.theme = theme;
@@ -651,7 +667,7 @@ els.familyFilter.addEventListener("click", (event) => {
 els.docTree.addEventListener("click", (event) => {
   const button = event.target.closest("[data-path]");
   if (!button) return;
-  loadDoc(decodeURIComponent(button.dataset.path), true);
+  loadDoc(decodeURIComponent(button.dataset.path), true, true);
 });
 
 els.featuredGrid.addEventListener("click", (event) => {
