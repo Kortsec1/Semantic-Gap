@@ -19,14 +19,17 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="brand" href="#/" aria-label="Semantic Gap Atlas">
+      <a class="brand" href="#overview" aria-label="Semantic Gap Atlas">
         <img src="/logo2.png" alt="" />
-        <span>Semantic Gap Atlas</span>
+        <span>
+          <strong>Semantic Gap Atlas</strong>
+          <small>Web Security Knowledge Base</small>
+        </span>
       </a>
       <nav class="topnav" aria-label="Primary navigation">
         <a href="#overview">Overview</a>
+        <a href="#taxonomy">Topics</a>
         <a href="#wiki">Wiki</a>
-        <a href="#taxonomy">Taxonomy</a>
       </nav>
     </div>
 
@@ -34,32 +37,49 @@
       <div class="hero-bg" aria-hidden="true">
         <img src="/image.png" alt="" />
       </div>
-      <div class="hero-copy">
-        <p class="eyebrow">Web Security Knowledge Base</p>
-        <h1>Semantic Gap Atlas</h1>
-        <p>
-          같은 입력이 서로 다른 파서, 정책 엔진, 브라우저, 프록시, 런타임에서
-          다른 의미로 해석되는 순간을 추적한다. 요약 카드가 아니라 원본 위키
-          문서 전체를 탐색할 수 있는 공개용 아카이브로 재구성했다.
-        </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#wiki">문서 전체 보기</a>
-          <a class="button ghost" href="#taxonomy">분류 체계</a>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Web Security Research Atlas</p>
+          <h1>Semantic Gap Atlas</h1>
+          <p>
+            같은 입력이 파서, 프록시, 브라우저, 정책 엔진, 런타임을 지나는 동안
+            서로 다른 의미로 해석되는 지점을 추적하는 웹 보안 지식 베이스.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#wiki">문서 탐색</a>
+            <a class="button ghost" href="#taxonomy">분류 보기</a>
+          </div>
         </div>
-      </div>
-      <div class="hero-stats" aria-label="Repository stats">
-        <div><strong id="stat-docs">64</strong><span>Documents</span></div>
-        <div><strong>5</strong><span>Families</span></div>
-        <div><strong>15</strong><span>Subcategories</span></div>
+        <div class="hero-panel" aria-label="Repository stats">
+          <div><strong id="stat-docs">0</strong><span>Documents</span></div>
+          <div><strong>5</strong><span>Families</span></div>
+          <div><strong>15</strong><span>Subcategories</span></div>
+        </div>
       </div>
     </header>
 
     <main>
+      <section class="overview-band" aria-label="Featured documents">
+        <div class="section-title">
+          <p class="eyebrow">Field Notes</p>
+          <h2>의미 불일치가 실제 공격이 되는 지점</h2>
+        </div>
+        <div id="featured-grid" class="featured-grid"></div>
+      </section>
+
+      <section id="taxonomy" class="taxonomy">
+        <div class="section-title">
+          <p class="eyebrow">Taxonomy</p>
+          <h2>다섯 개 층으로 보는 Semantic Gap</h2>
+        </div>
+        <div id="family-grid" class="family-grid"></div>
+      </section>
+
       <section id="wiki" class="wiki-shell">
         <aside class="sidebar" aria-label="Document navigation">
           <div class="sidebar-head">
-            <p class="eyebrow">Wiki</p>
-            <h2>문서 탐색</h2>
+            <p class="eyebrow">Wiki Browser</p>
+            <h2>Research Notes</h2>
           </div>
           <label class="search">
             <span>Search</span>
@@ -74,25 +94,20 @@
               <p id="doc-breadcrumb" class="breadcrumb">Semantic Gap</p>
               <h2 id="doc-title">문서를 불러오는 중</h2>
             </div>
-            <a id="raw-link" class="raw-link" href="#" target="_blank" rel="noreferrer">Raw</a>
+            <a id="raw-link" class="raw-link" href="#" target="_blank" rel="noreferrer">Open raw</a>
           </div>
           <div id="doc-meta" class="doc-meta"></div>
-          <div id="doc-content" class="markdown-body"></div>
+          <div class="reader-layout">
+            <div id="doc-content" class="markdown-body"></div>
+            <aside id="doc-toc" class="doc-toc" aria-label="Document outline"></aside>
+          </div>
         </article>
-      </section>
-
-      <section id="taxonomy" class="taxonomy">
-        <div class="section-title">
-          <p class="eyebrow">Taxonomy</p>
-          <h2>불일치가 발생하는 다섯 개의 층</h2>
-        </div>
-        <div id="family-grid" class="family-grid"></div>
       </section>
     </main>
 
     <footer class="footer">
       <strong>Semantic Gap Atlas</strong>
-      <span>Original repository notes rendered as a Vercel-hosted security wiki.</span>
+      <span>Original research notes rendered as a browsable security wiki.</span>
     </footer>
 
     <script src="/script.js"></script>

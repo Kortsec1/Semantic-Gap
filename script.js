@@ -123,6 +123,7 @@ const DOCS = [
 }));
 
 const els = {
+  featuredGrid: document.querySelector("#featured-grid"),
   familyGrid: document.querySelector("#family-grid"),
   docTree: document.querySelector("#doc-tree"),
   search: document.querySelector("#doc-search"),
@@ -130,6 +131,7 @@ const els = {
   breadcrumb: document.querySelector("#doc-breadcrumb"),
   meta: document.querySelector("#doc-meta"),
   content: document.querySelector("#doc-content"),
+  toc: document.querySelector("#doc-toc"),
   raw: document.querySelector("#raw-link"),
   statDocs: document.querySelector("#stat-docs"),
 };
@@ -167,6 +169,34 @@ function renderFamilies() {
       </article>
     `,
   ).join("");
+}
+
+function renderFeatured() {
+  const picks = [
+    "home/Syntax_Parsing_Gap/Boundary_Parsing_Mismatch/HTTP_Request_Smuggling.md",
+    "home/Metadata_Interpretation_Gap/State_&_Session_Mismatch/Web_Cache_Poisoning.md",
+    "home/Metadata_Interpretation_Gap/Identity_&_Integrity_Mismatch/JWT_Algorithm_Confusion.md",
+    "home/Syntax_Parsing_Gap/Duplicate_Key_Handling_Mismatch/HTTP_Parameter_Pollution.md",
+    "home/Security_Policy_Gap/Security_Validation_Logic_Mismatch/Method_Override_Bypass.md",
+    "home/Perceptual_Context_Gap/Input・Focus_Mismatch/Clipjacking.md",
+  ]
+    .map((path) => DOCS.find((doc) => doc.path === path))
+    .filter(Boolean);
+
+  els.featuredGrid.innerHTML = picks
+    .map(
+      (doc) => `
+        <a class="featured-card" href="#doc=${encodeURIComponent(doc.path)}">
+          <span>${escapeHtml(doc.family)}</span>
+          <div>
+            <strong>${escapeHtml(doc.title)}</strong>
+            <small>${escapeHtml(subLabel(doc.path))}</small>
+          </div>
+          <span class="open-doc">Read note</span>
+        </a>
+      `,
+    )
+    .join("");
 }
 
 function groupedDocs() {
@@ -235,8 +265,10 @@ async function loadDoc(path, updateHash = true) {
     els.meta.innerHTML = renderMeta(parsed.meta, doc);
     els.content.innerHTML = renderMarkdown(parsed.body);
     normalizeRenderedLinks();
+    renderToc();
   } catch (error) {
     els.content.innerHTML = `<div class="empty-state">문서를 불러오지 못했습니다. ${escapeHtml(error.message)}</div>`;
+    els.toc.innerHTML = "";
   }
   if (location.hash === "#wiki") {
     const target = document.querySelector("#wiki");
@@ -281,6 +313,7 @@ function renderMarkdown(markdown) {
   const lines = text.split("\n");
   const html = [];
   let listOpen = false;
+  let orderedListOpen = false;
   let paragraph = [];
 
   const flushParagraph = () => {
@@ -293,6 +326,11 @@ function renderMarkdown(markdown) {
     html.push("</ul>");
     listOpen = false;
   };
+  const closeOrderedList = () => {
+    if (!orderedListOpen) return;
+    html.push("</ol>");
+    orderedListOpen = false;
+  };
 
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
@@ -300,17 +338,20 @@ function renderMarkdown(markdown) {
     if (!trimmed) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       continue;
     }
     if (trimmed.startsWith("@@CODEBLOCK")) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       html.push(trimmed);
       continue;
     }
     if (/^<(table|div|tbody|thead)\b/i.test(trimmed)) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       const tag = trimmed.match(/^<([a-z0-9-]+)/i)?.[1]?.toLowerCase();
       const block = [line];
       if (tag === "table" || tag === "div") {
@@ -326,6 +367,7 @@ function renderMarkdown(markdown) {
     if (/^<[^>]+>/.test(trimmed)) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       html.push(line);
       continue;
     }
@@ -333,6 +375,7 @@ function renderMarkdown(markdown) {
     if (heading) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       const level = heading[1].length;
       html.push(`<h${level}>${renderInline(heading[2])}</h${level}>`);
       continue;
@@ -341,12 +384,14 @@ function renderMarkdown(markdown) {
     if (quote) {
       flushParagraph();
       closeList();
+      closeOrderedList();
       html.push(`<blockquote>${renderInline(quote[1])}</blockquote>`);
       continue;
     }
     const list = trimmed.match(/^[-*]\s+(.+)$/);
     if (list) {
       flushParagraph();
+      closeOrderedList();
       if (!listOpen) {
         html.push("<ul>");
         listOpen = true;
@@ -354,11 +399,23 @@ function renderMarkdown(markdown) {
       html.push(`<li>${renderInline(list[1])}</li>`);
       continue;
     }
+    const orderedList = trimmed.match(/^\d+\.\s+(.+)$/);
+    if (orderedList) {
+      flushParagraph();
+      closeList();
+      if (!orderedListOpen) {
+        html.push("<ol>");
+        orderedListOpen = true;
+      }
+      html.push(`<li>${renderInline(orderedList[1])}</li>`);
+      continue;
+    }
     paragraph.push(trimmed);
   }
 
   flushParagraph();
   closeList();
+  closeOrderedList();
 
   return html
     .join("\n")
@@ -427,6 +484,37 @@ function normalizeRenderedLinks() {
   });
 }
 
+function renderToc() {
+  const headings = Array.from(els.content.querySelectorAll("h2, h3")).slice(0, 12);
+  if (!headings.length) {
+    els.toc.innerHTML = "";
+    return;
+  }
+
+  const used = new Map();
+  headings.forEach((heading) => {
+    const base = slugify(heading.textContent);
+    const count = used.get(base) || 0;
+    used.set(base, count + 1);
+    heading.id = count ? `${base}-${count + 1}` : base;
+  });
+
+  els.toc.innerHTML = [
+    "<strong>On this page</strong>",
+    ...headings.map((heading) => `<a href="#${heading.id}">${escapeHtml(heading.textContent)}</a>`),
+  ].join("");
+}
+
+function slugify(value) {
+  const slug = String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/<[^>]+>/g, "")
+    .replace(/[^a-z0-9가-힣]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || "section";
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -442,6 +530,7 @@ function initialPath() {
   return "home.md";
 }
 
+renderFeatured();
 renderFamilies();
 renderDocTree();
 loadDoc(initialPath(), location.hash.includes("doc="));
@@ -451,6 +540,15 @@ els.docTree.addEventListener("click", (event) => {
   const button = event.target.closest("[data-path]");
   if (!button) return;
   loadDoc(decodeURIComponent(button.dataset.path), true);
+});
+
+els.featuredGrid.addEventListener("click", (event) => {
+  const link = event.target.closest("a[href^='#doc=']");
+  if (!link) return;
+  event.preventDefault();
+  const path = decodeURIComponent(link.getAttribute("href").replace("#doc=", ""));
+  loadDoc(path, true);
+  document.querySelector("#wiki")?.scrollIntoView({ block: "start" });
 });
 
 window.addEventListener("hashchange", () => {
