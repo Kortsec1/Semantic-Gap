@@ -125,6 +125,7 @@ const DOCS = [
 const els = {
   featuredGrid: document.querySelector("#featured-grid"),
   familyGrid: document.querySelector("#family-grid"),
+  familyFilter: document.querySelector("#family-filter"),
   docTree: document.querySelector("#doc-tree"),
   search: document.querySelector("#doc-search"),
   title: document.querySelector("#doc-title"),
@@ -137,6 +138,7 @@ const els = {
 };
 
 let activePath = "";
+let activeFamily = "All";
 
 els.statDocs.textContent = DOCS.length.toString();
 
@@ -165,10 +167,35 @@ function renderFamilies() {
           <h3>${family.label}</h3>
           <p>${family.summary}</p>
         </div>
+        <div class="family-meta">
+          <strong>${familyDocCount(family.id)}</strong>
+          <span>notes</span>
+        </div>
         <ul>${family.subs.map((sub) => `<li>${sub}</li>`).join("")}</ul>
       </article>
     `,
   ).join("");
+}
+
+function renderFamilyFilter() {
+  const families = ["All", ...FAMILIES.map((family) => family.id)];
+  els.familyFilter.innerHTML = families
+    .map((family) => {
+      const label = family === "All" ? "All" : family.replace(/_/g, " ");
+      const count = family === "All" ? DOCS.length : familyDocCount(family);
+      return `
+        <button class="${activeFamily === family ? "active" : ""}" type="button" data-family="${family}">
+          <span>${escapeHtml(label)}</span>
+          <strong>${count}</strong>
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function familyDocCount(familyId) {
+  const label = familyId.replace(/_/g, " ");
+  return DOCS.filter((doc) => doc.family === label).length;
 }
 
 function renderFeatured() {
@@ -205,6 +232,7 @@ function groupedDocs() {
   for (const doc of DOCS) {
     const haystack = `${doc.title} ${doc.path} ${doc.family} ${subLabel(doc.path)}`.toLowerCase();
     if (query && !haystack.includes(query)) continue;
+    if (activeFamily !== "All" && doc.family !== activeFamily.replace(/_/g, " ")) continue;
     const group = doc.family;
     if (!groups.has(group)) groups.set(group, []);
     groups.get(group).push(doc);
@@ -532,10 +560,18 @@ function initialPath() {
 
 renderFeatured();
 renderFamilies();
+renderFamilyFilter();
 renderDocTree();
 loadDoc(initialPath(), location.hash.includes("doc="));
 
 els.search.addEventListener("input", renderDocTree);
+els.familyFilter.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-family]");
+  if (!button) return;
+  activeFamily = button.dataset.family;
+  renderFamilyFilter();
+  renderDocTree();
+});
 els.docTree.addEventListener("click", (event) => {
   const button = event.target.closest("[data-path]");
   if (!button) return;

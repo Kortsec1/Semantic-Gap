@@ -39,40 +39,40 @@
       </div>
       <div class="hero-inner">
         <div class="hero-copy">
-          <p class="eyebrow">Web Security Research Atlas</p>
+          <p class="eyebrow">Semantic Gap Research</p>
           <h1>Semantic Gap Atlas</h1>
           <p>
-            같은 입력이 파서, 프록시, 브라우저, 정책 엔진, 런타임을 지나는 동안
-            서로 다른 의미로 해석되는 지점을 추적하는 웹 보안 지식 베이스.
+            동일한 입력이 파서, 프록시, 브라우저, 정책 엔진, 런타임에서 서로 다른 의미가
+            되는 순간을 추적하는 웹 보안 지식 베이스.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#wiki">문서 탐색</a>
             <a class="button ghost" href="#taxonomy">분류 보기</a>
           </div>
         </div>
-        <div class="hero-panel" aria-label="Repository stats">
-          <div><strong id="stat-docs">0</strong><span>Documents</span></div>
-          <div><strong>5</strong><span>Families</span></div>
-          <div><strong>15</strong><span>Subcategories</span></div>
+        <div class="hero-visual" aria-label="Semantic gap flow">
+          <div class="flow-node">Input</div>
+          <div class="flow-line"></div>
+          <div class="flow-grid">
+            <span>Parser</span>
+            <span>Proxy</span>
+            <span>Policy</span>
+            <span>Runtime</span>
+          </div>
+          <div class="flow-result">
+            <strong>Meaning diverges</strong>
+            <span>Curated notes across 5 semantic layers</span>
+          </div>
         </div>
       </div>
     </header>
 
     <main>
-      <section class="overview-band" aria-label="Featured documents">
-        <div class="section-title">
-          <p class="eyebrow">Field Notes</p>
-          <h2>의미 불일치가 실제 공격이 되는 지점</h2>
-        </div>
-        <div id="featured-grid" class="featured-grid"></div>
-      </section>
-
-      <section id="taxonomy" class="taxonomy">
-        <div class="section-title">
-          <p class="eyebrow">Taxonomy</p>
-          <h2>다섯 개 층으로 보는 Semantic Gap</h2>
-        </div>
-        <div id="family-grid" class="family-grid"></div>
+      <section class="metrics" aria-label="Repository stats">
+        <div><strong id="stat-docs">0</strong><span>Documents</span></div>
+        <div><strong>5</strong><span>Families</span></div>
+        <div><strong>15</strong><span>Subcategories</span></div>
+        <div><strong>1</strong><span>Atlas</span></div>
       </section>
 
       <section id="wiki" class="wiki-shell">
@@ -83,8 +83,9 @@
           </div>
           <label class="search">
             <span>Search</span>
-            <input id="doc-search" type="search" placeholder="JWT, cache, parsing..." />
+            <input id="doc-search" type="search" placeholder="JWT, cache, parser, policy..." />
           </label>
+          <div id="family-filter" class="family-filter" aria-label="Family filter"></div>
           <div id="doc-tree" class="doc-tree"></div>
         </aside>
 
@@ -94,7 +95,7 @@
               <p id="doc-breadcrumb" class="breadcrumb">Semantic Gap</p>
               <h2 id="doc-title">문서를 불러오는 중</h2>
             </div>
-            <a id="raw-link" class="raw-link" href="#" target="_blank" rel="noreferrer">Open raw</a>
+            <a id="raw-link" class="raw-link" href="#" target="_blank" rel="noreferrer">Raw</a>
           </div>
           <div id="doc-meta" class="doc-meta"></div>
           <div class="reader-layout">
@@ -102,6 +103,28 @@
             <aside id="doc-toc" class="doc-toc" aria-label="Document outline"></aside>
           </div>
         </article>
+      </section>
+
+      <section class="overview-band" aria-label="Featured documents">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Featured Notes</p>
+            <h2>대표 공격 노트</h2>
+          </div>
+          <p>파싱, 캐시, 토큰, 정책, 클릭 맥락이 어긋나는 대표 사례를 빠르게 훑어볼 수 있습니다.</p>
+        </div>
+        <div id="featured-grid" class="featured-grid"></div>
+      </section>
+
+      <section id="taxonomy" class="taxonomy">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Taxonomy</p>
+            <h2>다섯 개 층으로 보는 Semantic Gap</h2>
+          </div>
+          <p>문서는 불일치가 발생하는 계층과 하위 패턴 기준으로 묶여 있습니다.</p>
+        </div>
+        <div id="family-grid" class="family-grid"></div>
       </section>
     </main>
 
