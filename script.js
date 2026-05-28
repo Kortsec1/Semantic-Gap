@@ -142,6 +142,7 @@ const els = {
 let activePath = "";
 let activeFamily = "All";
 let activeTheme = localStorage.getItem("semantic-gap-theme") || "night";
+let tocObserver = null;
 
 els.statDocs.textContent = DOCS.length.toString();
 applyTheme(activeTheme);
@@ -493,6 +494,7 @@ function splitTableRow(line) {
 
 function renderInline(value) {
   let text = escapeHtml(value);
+  text = text.replace(/\\([\[\]])/g, "$1");
   text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
   text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   text = text.replace(/_([^_]+)_/g, "<em>$1</em>");
@@ -502,6 +504,7 @@ function renderInline(value) {
 }
 
 function normalizeRenderedLinks() {
+  normalizeEscapedReferences();
   els.content.querySelectorAll("img").forEach((img) => {
     const src = img.getAttribute("src");
     if (src && !src.startsWith("http") && !src.startsWith("/")) {
@@ -519,7 +522,30 @@ function normalizeRenderedLinks() {
   });
 }
 
+function normalizeEscapedReferences() {
+  const walker = document.createTreeWalker(els.content, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest("code, pre, script, style")) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return /\\[\[\]]/.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+    },
+  });
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    node.nodeValue = node.nodeValue.replace(/\\([\[\]])/g, "$1");
+  });
+}
+
 function renderToc() {
+  if (tocObserver) {
+    tocObserver.disconnect();
+    tocObserver = null;
+  }
+
   const headings = Array.from(els.content.querySelectorAll("h2, h3")).slice(0, 12);
   if (!headings.length) {
     els.toc.innerHTML = "";
@@ -536,8 +562,35 @@ function renderToc() {
 
   els.toc.innerHTML = [
     "<strong>On this page</strong>",
-    ...headings.map((heading) => `<a href="#${heading.id}">${escapeHtml(heading.textContent)}</a>`),
+    ...headings.map((heading) => `<a href="#${heading.id}" data-toc-target="${heading.id}">${escapeHtml(heading.textContent)}</a>`),
   ].join("");
+  observeToc(headings);
+}
+
+function observeToc(headings) {
+  const links = new Map(
+    Array.from(els.toc.querySelectorAll("[data-toc-target]")).map((link) => [link.dataset.tocTarget, link]),
+  );
+
+  const setActive = (id) => {
+    links.forEach((link) => link.classList.toggle("active", link.dataset.tocTarget === id));
+  };
+
+  setActive(headings[0].id);
+  tocObserver = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible[0]) setActive(visible[0].target.id);
+    },
+    {
+      root: null,
+      rootMargin: "-18% 0px -68% 0px",
+      threshold: [0, 1],
+    },
+  );
+  headings.forEach((heading) => tocObserver.observe(heading));
 }
 
 function slugify(value) {
