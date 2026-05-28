@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="night">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,7 +12,7 @@
       property="og:description"
       content="구문, 표현, 메타데이터, 정책, 인지 맥락 불일치를 전체 위키 문서로 탐색"
     />
-    <meta property="og:image" content="/image.png" />
+    <meta property="og:image" content="/hero-semantic-gap.png" />
     <title>Semantic Gap Atlas</title>
     <link rel="icon" href="/logo2.png" />
     <link rel="stylesheet" href="/styles.css" />
@@ -30,12 +30,18 @@
         <a href="#overview">Overview</a>
         <a href="#taxonomy">Topics</a>
         <a href="#wiki">Wiki</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme">
+          <span class="theme-toggle-track" aria-hidden="true">
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span id="theme-label">Night</span>
+        </button>
       </nav>
     </div>
 
     <header id="overview" class="hero">
       <div class="hero-bg" aria-hidden="true">
-        <img src="/image.png" alt="" />
+        <img src="/hero-semantic-gap.png" alt="" />
       </div>
       <div class="hero-inner">
         <div class="hero-copy">

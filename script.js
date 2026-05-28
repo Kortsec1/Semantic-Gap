@@ -123,6 +123,8 @@ const DOCS = [
 }));
 
 const els = {
+  themeToggle: document.querySelector("#theme-toggle"),
+  themeLabel: document.querySelector("#theme-label"),
   featuredGrid: document.querySelector("#featured-grid"),
   familyGrid: document.querySelector("#family-grid"),
   familyFilter: document.querySelector("#family-filter"),
@@ -139,8 +141,10 @@ const els = {
 
 let activePath = "";
 let activeFamily = "All";
+let activeTheme = localStorage.getItem("semantic-gap-theme") || "night";
 
 els.statDocs.textContent = DOCS.length.toString();
+applyTheme(activeTheme);
 
 function familyName(path) {
   if (!path.startsWith("home/")) return "Overview";
@@ -162,8 +166,11 @@ function renderFamilies() {
   els.familyGrid.innerHTML = FAMILIES.map(
     (family, index) => `
       <article class="family-card">
-        <div>
-          <span class="index">${index + 1}</span>
+        <div class="family-card-head">
+          <span class="index">${String(index + 1).padStart(2, "0")}</span>
+          <span>${family.subs.length} patterns</span>
+        </div>
+        <div class="family-card-body">
           <h3>${family.label}</h3>
           <p>${family.summary}</p>
         </div>
@@ -171,7 +178,7 @@ function renderFamilies() {
           <strong>${familyDocCount(family.id)}</strong>
           <span>notes</span>
         </div>
-        <ul>${family.subs.map((sub) => `<li>${sub}</li>`).join("")}</ul>
+        <ul>${family.subs.map((sub) => `<li><span></span>${sub}</li>`).join("")}</ul>
       </article>
     `,
   ).join("");
@@ -543,6 +550,18 @@ function slugify(value) {
   return slug || "section";
 }
 
+function applyTheme(theme) {
+  activeTheme = theme;
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem("semantic-gap-theme", theme);
+  if (els.themeLabel) {
+    els.themeLabel.textContent = theme === "night" ? "Night" : "Day";
+  }
+  if (els.themeToggle) {
+    els.themeToggle.setAttribute("aria-pressed", String(theme === "night"));
+  }
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -563,6 +582,10 @@ renderFamilies();
 renderFamilyFilter();
 renderDocTree();
 loadDoc(initialPath(), location.hash.includes("doc="));
+
+els.themeToggle.addEventListener("click", () => {
+  applyTheme(activeTheme === "night" ? "day" : "night");
+});
 
 els.search.addEventListener("input", renderDocTree);
 els.familyFilter.addEventListener("click", (event) => {
